@@ -48,7 +48,8 @@
 	async function Get(type, addQ = true) {
 		// math, riddlemethis, unscramble, getannoyed
 		try {
-			const response = await fetch(`https://annoymeapi-302be0c6p-guysandlers-projects.vercel.app/api/${type}`);
+			const response = await fetch(`https://annoymeapi.vercel.app/api/${type}`);
+			console.log(await response.text());
 			const data = await response.json();
 			if (addQ) {
 				document.getElementById('q'+currentQuestion).style.display = 'none';
@@ -68,7 +69,6 @@
 				document.getElementById('q'+(currentQuestion+1)).style.display = 'block';
 
 				currentQuestion++;
-				console.log(data);
 				return data.id;
 			}
 			else {
@@ -89,7 +89,7 @@
 			"time": getPSTTime()
 		};
 		try {
-			const response = await fetch('https://annoymeapi-302be0c6p-guysandlers-projects.vercel.app/api/checkandsubmit', {
+			const response = await fetch('https://annoymeapi.vercel.app/api/checkandsubmit', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
