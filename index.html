@@ -35,7 +35,7 @@
 					sendNotification('HAHA', response);
 				}
 				console.log(response);
-			}, 5000);
+			}, 50000);
 
 		} else {
 			document.getElementById('Annoyer').style.display = 'block';
@@ -98,6 +98,7 @@
 			});
 			const res = await response.json();
 			console.log(res);
+			alert(res);
 		} catch (error) {
 			console.error('Error:', error);
 		}
