@@ -8,7 +8,7 @@ app.use(cors());
 // dotenv.config();
 // future
 
-app.listen(3000, () => console.log("Server running on port 3000"));
+// app.listen(3000, () => console.log("Server running on port 3000"));
 
 const mathPuzzles = [
 	{
@@ -178,3 +178,5 @@ app.post("/api/checkandsubmit", (req, res) => {
 		);
 	res.status(201).send(); // give back a 👍
 });
+
+module.exports = app;
