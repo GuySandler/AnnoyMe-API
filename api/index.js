@@ -138,7 +138,7 @@ app.post("/api/checkandsubmit", (req, res) => {
 	// }
 	const body = req.body;
 	// console.log(body.unscrambleAnswer);
-	const MathAnswer = body.mathAnswer.toString().trim(); // might need some more cleaning
+	const MathAnswer = Number(body.mathAnswer.toString().trim()); // might need some more cleaning
 	const RiddleAnswer = body.riddleAnswer
 		.toString()
 		.trim()
