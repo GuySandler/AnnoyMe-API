@@ -14,8 +14,8 @@ Theses are for getting each question
 All return JSON of
 ```json
 {
-	question: "...",
-	id: 1
+	"question": "...",
+	"id": 1,
 }
 ```
 
@@ -35,7 +35,7 @@ It execpts the JSON
 	"riddleAnswer": "...",
 	"riddleID": 1,
 	"unscrambleAnswer": "...",
-	"unscrambleID": 1,"
-	"time": "..." (this will be added on the website)
+	"unscrambleID": 1,
+	"time": "..."
 }
 ```
