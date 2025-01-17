@@ -1,0 +1,180 @@
+const express = require("express");
+const app = express();
+app.use(express.json());
+const cors = require("cors");
+app.use(cors());
+// add .env for questions
+// const dotenv = require("dotenv");
+// dotenv.config();
+// future
+
+app.listen(3000, () => console.log("Server running on port 3000"));
+
+const mathPuzzles = [
+	{
+		question: "What is 2 + 2?",
+		id: 1,
+		answer: 4
+	},
+	{
+		question: "What is 2 * (2/1.25)?",
+		id: 2,
+		answer: 3.2
+	}
+	// make more in LATEX format
+];
+
+const Riddles = [
+	{
+		question: "I am invisible, yet you can see me. If you put me through a barrel, I make it lighter. What am I?",
+		answer: "hole",
+		id: 1
+	},
+	{
+		question: "What has ten letters and starts with gas?",
+		answer: "automobile",
+		id: 2
+	},
+	{ // what
+		question: "There came a bird featherless and sat on the trees leafless. There came a maiden speechless and ate the bird featherless, from off the trees leafless. What is it?",
+		answer: "snow",
+		id: 3
+	},
+	// make more original ones
+];
+
+const wordsToScramble = [ // maybe add more idk
+	{word:"Hexakosioihexekontahexaphobia", id:1},
+	{word:"Antidisestablishmentarianism", id:2},
+	{word:"Pseudopseudohypoparathyroidism", id:3},
+	{word:"Supercalifragilisticexpialidocious", id:4},
+	{word:"Pseudopseudohypoparathyroidism", id:5},
+];
+
+function PickRandomItem(array) {
+	return array[Math.floor(Math.random() * array.length)];
+}
+function scrambler(randWord) {
+	return {
+		word: randWord.word.split("").sort(() => Math.random() - 0.5).join(""),
+		id: randWord.id
+	};
+}
+
+app.get("/api/math", (req, res) => {
+	res.send(
+		(() => {
+			const randMath = PickRandomItem(mathPuzzles);
+			return JSON.stringify({
+				question: randMath.question,
+				id: randMath.id
+			});
+		})()
+	);
+});
+app.get("/api/riddlemethis", (req, res) => {
+	res.send(
+		(() => {
+			const randRiddle = PickRandomItem(Riddles);
+			return JSON.stringify({
+				question: randRiddle.question,
+				id: randRiddle.id
+			});
+		})()
+	);
+});
+app.get("/api/unscramble", (req, res) => {
+	res.send(
+		(() => {
+			const scrambled = scrambler(PickRandomItem(wordsToScramble));
+			// console.log(scrambled);
+			return JSON.stringify({
+				question: scrambled.word,
+				id: scrambled.id,
+			});
+		})()
+	);
+});
+
+app.get("/api/getannoyed", (req, res) => {
+	if (successfulAnnoys > 0) {
+		res.send(JSON.stringify(`${successfulAnnoys} people annoyed you in the past 5 seconds`));
+		successfulAnnoys = 0;
+	}
+	else res.send(JSON.stringify("0"));
+});
+
+let successfulAnnoys = 0;
+
+app.post("/api/checkandsubmit", (req, res) => {
+	// expects
+	// {
+	// 	"mathAnswer": 4,
+	// 	"mathID": 1,
+	// 	"riddleAnswer": "hole",
+	//  "riddleID": 1,
+	// 	"unscrambleAnswer": "hexakosioihexekontahexaphobia",
+	//  "unscrambleID": 1,"
+	// 	"time": "2021-05-21T18:25:43.511Z"
+	// }
+	const body = req.body;
+	// console.log(body.unscrambleAnswer);
+	const MathAnswer = body.mathAnswer
+		.toString()
+		.trim() // might need some more cleaning
+	const RiddleAnswer = body.riddleAnswer
+		.toString()
+		.trim()
+		.toLowerCase()
+		.replace(/[^a-zA-Z0-9]/g, "");
+	const UnscrambleAnswer = body.unscrambleAnswer
+		.toString()
+		.trim()
+		.toLowerCase()
+		.replace(/[^a-zA-Z0-9]/g, "");
+
+	// IDs
+	const MathID = body.mathID;
+	const RiddleID = body.riddleID;
+	const UnscrambleID = body.unscrambleID;
+
+	// keys
+	let passedMath = false;
+	let passedRiddle = false;
+	let passedUnscramble = false;
+
+	// check scramble
+	if (
+		UnscrambleAnswer === wordsToScramble.find(
+			(word) => word.id === body.unscrambleID
+		).word
+	) {passedUnscramble = true;}
+
+	// check math
+	if (
+		MathAnswer === mathPuzzles.find((puzzle) => puzzle.id === MathID).answer
+	) {passedMath = true;}
+
+	// check riddle
+	if (
+		RiddleAnswer === Riddles.find((riddle) => riddle.id === RiddleID).answer
+	) {passedRiddle = true;}
+
+	if (passedMath && passedRiddle && passedUnscramble) {
+		res.send(
+			JSON.stringify(
+				"Notification successfully sent to all of my devices 😥"
+			)
+		);
+		console.log("someone passed at " + body.time);
+		successfulAnnoys++;
+	}
+	// You failed to solve the puzzles, try again in a day (Don't check your cookies) 😈 add cookies in future
+	else
+		res.send(
+			JSON.stringify(
+				"You failed to solve the puzzles 😈"
+			)
+		);
+	res.status(201).send(); // give back a 👍
+});

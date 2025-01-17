@@ -1,0 +1,20 @@
+{
+	"name": "annoyme-api",
+	"version": "1.0.0",
+	"description": "solve puzzles to be able to annoy me",
+	"main": "server.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"start": "node server.js"
+	},
+	"author": "Guy",
+	"license": "ISC",
+	"dependencies": {
+		"cors": "^2.8.5",
+		"dotenv": "^16.4.7",
+		"express": "^4.21.2",
+		"http-server": "^14.1.1",
+		"jquery": "^3.7.1",
+		"node-fetch": "^2.7.0"
+	}
+}

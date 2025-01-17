@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>AnnoyMeAPI Dashboard</title>
+</head>
+<body>
+	<label for="type">Do you want to get annoyed with me (for some reason)?</label>
+	<input type="checkbox" name="type" id="type">
+	<div id="Annoyer">
+		<h1>To Annoy Me You Must Answer Me These Questions Three...</h1>
+		<button id="q1">Get the first question</button>
+		<button id="q2" style="display: none;">Get the second question</button>
+		<button id="q3" style="display: none;">Get the third question</button>
+		<button id="q4" style="display: none;">Submit</button>
+	</div>
+	<div id="Annoyee" style="display:none;">
+		<h1>Get annoyed?</h1>
+		<button id="notifPems">Allow notifications</button>
+	</div>
+</body>
+
+<script>
+	const type = document.getElementById('type');
+	type.addEventListener('change', (e) => {
+		let getannoyedInteval;
+		if (e.target.checked) {
+			document.getElementById('Annoyee').style.display = 'block';
+			document.getElementById('Annoyer').style.display = 'none';
+			getannoyedInteval = setInterval(async () => {
+				let response = await Get('getannoyed', false);
+				if (response !== '0') {
+					// alert("get annoyed");
+					sendNotification('HAHA', response);
+				}
+				console.log(response);
+			}, 5000);
+
+		} else {
+			document.getElementById('Annoyer').style.display = 'block';
+			document.getElementById('Annoyee').style.display = 'none';
+			clearInterval(getannoyedInteval);
+		}
+	});
+
+	let currentQuestion = 1;
+	async function Get(type, addQ = true) {
+		// math, riddlemethis, unscramble, getannoyed
+		try {
+			const response = await fetch(`http://localhost:3000/api/${type}`);
+			const data = await response.json();
+			if (addQ) {
+				document.getElementById('q'+currentQuestion).style.display = 'none';
+
+				const label = document.createElement('label');
+				label.setAttribute('for', currentQuestion);
+				label.textContent = data.question;
+
+				const input = document.createElement('input');
+				input.setAttribute('type', 'text');
+				input.setAttribute('id', currentQuestion);
+				input.setAttribute('name', currentQuestion);
+
+				document.body.appendChild(label);
+				document.body.appendChild(input);
+				document.body.appendChild(document.createElement('br'));
+				document.getElementById('q'+(currentQuestion+1)).style.display = 'block';
+
+				currentQuestion++;
+				console.log(data);
+				return data.id;
+			}
+			else {
+				return data;
+			}
+		} catch (error) {
+			console.error('Error:', error);
+		}
+	}
+	async function Post(riddle, unscramble, math) {
+		const data = {
+			"mathAnswer": math,
+			"unscrambleAnswer": unscramble,
+			"riddleAnswer": riddle,
+			"riddleID": riddleID,
+			"unscrambleID": unscrambleID,
+			"mathID": mathID,
+			"time": getPSTTime()
+		};
+		try {
+			const response = await fetch('http://localhost:3000/api/checkandsubmit', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(data)
+			});
+			const res = await response.json();
+			console.log(res);
+		} catch (error) {
+			console.error('Error:', error);
+		}
+
+	}
+
+	function getPSTTime() { // maybe I will do something with this
+		const now = new Date();
+		const options = {
+			timeZone: 'America/Los_Angeles',
+			hour12: true,
+			year: 'numeric',
+			month: 'long',
+			day: 'numeric',
+			hour: '2-digit',
+			minute: '2-digit',
+			second: '2-digit',
+		};
+		return new Intl.DateTimeFormat('en-US', options).format(now);
+	}
+
+	const q1 = document.getElementById('q1');
+	const q2 = document.getElementById('q2');
+	const q3 = document.getElementById('q3');
+	const q4 = document.getElementById('q4');
+	let mathID, riddleID, unscrambleID;
+	q1.addEventListener('click', async (e) => {
+		riddleID = await Get('riddlemethis');
+	});
+	q2.addEventListener('click', async (e) => {
+		unscrambleID = await Get('unscramble');
+	});
+	q3.addEventListener('click', async (e) => {
+		mathID = await Get('math');
+	});
+	q4.addEventListener('click', async (e) => {
+		const riddle = document.getElementById('1').value;
+		const unscramble = document.getElementById('2').value;
+		const math = document.getElementById('3').value;
+		await Post(riddle, unscramble, math);
+	});
+
+	const notifPems = document.getElementById('notifPems');
+	notifPems.addEventListener('click', async (e) => {
+		try {
+			if (!('Notification' in window)) {
+				console.error('This browser does not support notifications.');
+				return;
+			}
+
+			const result = await Notification.requestPermission();
+			if (result === 'granted') {
+				console.log('Notification permission granted.');
+				new Notification('Hello!', {
+					body: 'notifications work 👍',
+				});
+			} else {
+				console.error('Notification permission denied.');
+			}
+		} catch (error) {
+			console.error('oopsie:', error);
+		}
+	});
+
+	function sendNotification(title, body) {
+		new Notification(title, {
+			body,
+		});
+	}
+</script>
+</html>
