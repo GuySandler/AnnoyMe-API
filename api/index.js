@@ -1,8 +1,17 @@
 const express = require("express");
 const app = express();
-app.use(express.json());
 const cors = require("cors");
-app.use(cors());
+
+const corsOptions = {
+	origin: "*", // Allow all origins (or specify a specific origin like 'http://yourdomain.com')
+	methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Allowed methods
+	allowedHeaders: ["Content-Type", "Authorization"], // Allowed headers
+	credentials: true, // Allow cookies or credentials
+};
+
+app.use(cors(corsOptions)); // Apply CORS middleware with custom options
+
+app.use(express.json());
 // add .env for questions
 // const dotenv = require("dotenv");
 // dotenv.config();
@@ -14,41 +23,45 @@ const mathPuzzles = [
 	{
 		question: "What is 2 + 2?",
 		id: 1,
-		answer: 4
+		answer: 4,
 	},
 	{
 		question: "What is 2 * (2/1.25)?",
 		id: 2,
-		answer: 3.2
-	}
+		answer: 3.2,
+	},
 	// make more in LATEX format
 ];
 
 const Riddles = [
 	{
-		question: "I am invisible, yet you can see me. If you put me through a barrel, I make it lighter. What am I?",
+		question:
+			"I am invisible, yet you can see me. If you put me through a barrel, I make it lighter. What am I?",
 		answer: "hole",
-		id: 1
+		id: 1,
 	},
 	{
 		question: "What has ten letters and starts with gas?",
 		answer: "automobile",
-		id: 2
+		id: 2,
 	},
-	{ // what
-		question: "There came a bird featherless and sat on the trees leafless. There came a maiden speechless and ate the bird featherless, from off the trees leafless. What is it?",
+	{
+		// what
+		question:
+			"There came a bird featherless and sat on the trees leafless. There came a maiden speechless and ate the bird featherless, from off the trees leafless. What is it?",
 		answer: "snow",
-		id: 3
+		id: 3,
 	},
 	// make more original ones
 ];
 
-const wordsToScramble = [ // maybe add more idk
-	{word:"Hexakosioihexekontahexaphobia", id:1},
-	{word:"Antidisestablishmentarianism", id:2},
-	{word:"Pseudopseudohypoparathyroidism", id:3},
-	{word:"Supercalifragilisticexpialidocious", id:4},
-	{word:"Pseudopseudohypoparathyroidism", id:5},
+const wordsToScramble = [
+	// maybe add more idk
+	{ word: "Hexakosioihexekontahexaphobia", id: 1 },
+	{ word: "Antidisestablishmentarianism", id: 2 },
+	{ word: "Pseudopseudohypoparathyroidism", id: 3 },
+	{ word: "Supercalifragilisticexpialidocious", id: 4 },
+	{ word: "Pseudopseudohypoparathyroidism", id: 5 },
 ];
 
 function PickRandomItem(array) {
@@ -56,8 +69,11 @@ function PickRandomItem(array) {
 }
 function scrambler(randWord) {
 	return {
-		word: randWord.word.split("").sort(() => Math.random() - 0.5).join(""),
-		id: randWord.id
+		word: randWord.word
+			.split("")
+			.sort(() => Math.random() - 0.5)
+			.join(""),
+		id: randWord.id,
 	};
 }
 
@@ -67,7 +83,7 @@ app.get("/api/math", (req, res) => {
 			const randMath = PickRandomItem(mathPuzzles);
 			return JSON.stringify({
 				question: randMath.question,
-				id: randMath.id
+				id: randMath.id,
 			});
 		})()
 	);
@@ -78,7 +94,7 @@ app.get("/api/riddlemethis", (req, res) => {
 			const randRiddle = PickRandomItem(Riddles);
 			return JSON.stringify({
 				question: randRiddle.question,
-				id: randRiddle.id
+				id: randRiddle.id,
 			});
 		})()
 	);
@@ -98,10 +114,13 @@ app.get("/api/unscramble", (req, res) => {
 
 app.get("/api/getannoyed", (req, res) => {
 	if (successfulAnnoys > 0) {
-		res.send(JSON.stringify(`${successfulAnnoys} people annoyed you in the past 5 seconds`));
+		res.send(
+			JSON.stringify(
+				`${successfulAnnoys} people annoyed you in the past 5 seconds`
+			)
+		);
 		successfulAnnoys = 0;
-	}
-	else res.send(JSON.stringify("0"));
+	} else res.send(JSON.stringify("0"));
 });
 
 let successfulAnnoys = 0;
@@ -119,9 +138,7 @@ app.post("/api/checkandsubmit", (req, res) => {
 	// }
 	const body = req.body;
 	// console.log(body.unscrambleAnswer);
-	const MathAnswer = body.mathAnswer
-		.toString()
-		.trim() // might need some more cleaning
+	const MathAnswer = body.mathAnswer.toString().trim(); // might need some more cleaning
 	const RiddleAnswer = body.riddleAnswer
 		.toString()
 		.trim()
@@ -145,20 +162,25 @@ app.post("/api/checkandsubmit", (req, res) => {
 
 	// check scramble
 	if (
-		UnscrambleAnswer === wordsToScramble.find(
-			(word) => word.id === body.unscrambleID
-		).word
-	) {passedUnscramble = true;}
+		UnscrambleAnswer ===
+		wordsToScramble.find((word) => word.id === body.unscrambleID).word
+	) {
+		passedUnscramble = true;
+	}
 
 	// check math
 	if (
 		MathAnswer === mathPuzzles.find((puzzle) => puzzle.id === MathID).answer
-	) {passedMath = true;}
+	) {
+		passedMath = true;
+	}
 
 	// check riddle
 	if (
 		RiddleAnswer === Riddles.find((riddle) => riddle.id === RiddleID).answer
-	) {passedRiddle = true;}
+	) {
+		passedRiddle = true;
+	}
 
 	if (passedMath && passedRiddle && passedUnscramble) {
 		res.send(
@@ -170,12 +192,7 @@ app.post("/api/checkandsubmit", (req, res) => {
 		successfulAnnoys++;
 	}
 	// You failed to solve the puzzles, try again in a day (Don't check your cookies) 😈 add cookies in future
-	else
-		res.send(
-			JSON.stringify(
-				"You failed to solve the puzzles 😈"
-			)
-		);
+	else res.send(JSON.stringify("You failed to solve the puzzles 😈"));
 	res.status(201).send(); // give back a 👍
 });
 
