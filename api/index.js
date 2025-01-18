@@ -61,7 +61,6 @@ const wordsToScramble = [
 	{ word: "Antidisestablishmentarianism", id: 2 },
 	{ word: "Pseudopseudohypoparathyroidism", id: 3 },
 	{ word: "Supercalifragilisticexpialidocious", id: 4 },
-	{ word: "Pseudopseudohypoparathyroidism", id: 5 },
 ];
 
 function PickRandomItem(array) {
@@ -125,6 +124,10 @@ app.get("/api/getannoyed", (req, res) => {
 
 let successfulAnnoys = 0;
 
+function checkAnswer(question, id, answer) {
+
+}
+
 app.post("/api/checkandsubmit", (req, res) => {
 	// expects
 	// {
@@ -163,9 +166,10 @@ app.post("/api/checkandsubmit", (req, res) => {
 	// check scramble
 	if (
 		UnscrambleAnswer ===
-		wordsToScramble.find((word) => word.id === body.unscrambleID).word
+		wordsToScramble.find((word) => word.id === UnscrambleID).word
 	) {
 		passedUnscramble = true;
+		console.log("passed unscramble");
 	}
 
 	// check math
@@ -173,6 +177,7 @@ app.post("/api/checkandsubmit", (req, res) => {
 		MathAnswer === mathPuzzles.find((puzzle) => puzzle.id === MathID).answer
 	) {
 		passedMath = true;
+		console.log("passed math");
 	}
 
 	// check riddle
@@ -180,6 +185,7 @@ app.post("/api/checkandsubmit", (req, res) => {
 		RiddleAnswer === Riddles.find((riddle) => riddle.id === RiddleID).answer
 	) {
 		passedRiddle = true;
+		console.log("passed riddle");
 	}
 
 	if (passedMath && passedRiddle && passedUnscramble) {
