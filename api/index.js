@@ -198,7 +198,7 @@ app.post("/api/checkandsubmit", (req, res) => {
 		successfulAnnoys++;
 	}
 	// You failed to solve the puzzles, try again in a day (Don't check your cookies) 😈 add cookies in future
-	else res.send(JSON.stringify("You failed to solve the puzzles 😈"));
+	else res.send(JSON.stringify(`You failed to solve the puzzles 😈\nMath:${passedMath}\nRiddle${passedRiddle}\nUnscramble:${passedUnscramble}`));
 	res.status(201).send(); // give back a 👍
 });
 
