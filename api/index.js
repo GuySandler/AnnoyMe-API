@@ -166,7 +166,7 @@ app.post("/api/checkandsubmit", (req, res) => {
 	// check scramble
 	if (
 		UnscrambleAnswer ===
-		wordsToScramble.find((word) => word.id === UnscrambleID).word
+		wordsToScramble.find((word) => word.id === UnscrambleID).word.toLowerCase()
 	) {
 		passedUnscramble = true;
 		console.log("passed unscramble");
@@ -198,7 +198,14 @@ app.post("/api/checkandsubmit", (req, res) => {
 		successfulAnnoys++;
 	}
 	// You failed to solve the puzzles, try again in a day (Don't check your cookies) 😈 add cookies in future
-	else res.send(JSON.stringify(`You failed to solve the puzzles 😈\nMath:${passedMath}\nRiddle${passedRiddle}\nUnscramble:${passedUnscramble}`));
+	// else res.send(JSON.stringify(`You failed to solve the puzzles 😈\nMath:${passedMath}\nRiddle${passedRiddle}\nUnscramble:${passedUnscramble}`));
+	else
+		res.send(
+			JSON.stringify(
+				"You failed to solve the puzzles 😈"
+			)
+		);
+
 	res.status(201).send(); // give back a 👍
 });
 
