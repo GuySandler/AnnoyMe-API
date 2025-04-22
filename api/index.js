@@ -80,10 +80,10 @@ app.get("/api/math", (req, res) => {
 	res.json(
 		(() => {
 			const randMath = PickRandomItem(mathPuzzles);
-			return JSON.stringify({
+			return {
 				question: randMath.question,
 				id: randMath.id,
-			});
+			};
 		})()
 	);
 });
@@ -91,10 +91,10 @@ app.get("/api/riddlemethis", (req, res) => {
 	res.json(
 		(() => {
 			const randRiddle = PickRandomItem(Riddles);
-			return JSON.stringify({
+			return {
 				question: randRiddle.question,
 				id: randRiddle.id,
-			});
+			};
 		})()
 	);
 });
@@ -103,10 +103,10 @@ app.get("/api/unscramble", (req, res) => {
 		(() => {
 			const scrambled = scrambler(PickRandomItem(wordsToScramble));
 			// console.log(scrambled);
-			return JSON.stringify({
+			return {
 				question: scrambled.word,
 				id: scrambled.id,
-			});
+			};
 		})()
 	);
 });
@@ -114,12 +114,10 @@ app.get("/api/unscramble", (req, res) => {
 app.get("/api/getannoyed", (req, res) => {
 	if (successfulAnnoys > 0) {
 		res.json(
-			JSON.stringify(
-				`${successfulAnnoys} people annoyed you in the past 5 seconds`
-			)
+			`${successfulAnnoys} people annoyed you in the past 5 seconds`
 		);
 		successfulAnnoys = 0;
-	} else res.json(JSON.stringify("0"));
+	} else res.json("0");
 });
 
 let successfulAnnoys = 0;
@@ -190,9 +188,7 @@ app.post("/api/checkandsubmit", (req, res) => {
 
 	if (passedMath && passedRiddle && passedUnscramble) {
 		res.json(
-			JSON.stringify(
-				"Notification successfully sent to all of my devices 😥"
-			)
+			"Notification successfully sent to all of my devices 😥"
 		);
 		console.log("someone passed at " + body.time);
 		successfulAnnoys++;
@@ -201,12 +197,8 @@ app.post("/api/checkandsubmit", (req, res) => {
 	// else res.json(JSON.stringify(`You failed to solve the puzzles 😈\nMath:${passedMath}\nRiddle${passedRiddle}\nUnscramble:${passedUnscramble}`));
 	else
 		res.json(
-			JSON.stringify(
-				"You failed to solve the puzzles 😈"
-			)
+			"You failed to solve the puzzles 😈"
 		);
-
-	res.status(201).send(); // give back a 👍
 });
 
 module.exports = app;

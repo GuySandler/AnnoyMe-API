@@ -30,12 +30,12 @@
 			document.getElementById('Annoyer').style.display = 'none';
 			getannoyedInteval = setInterval(async () => {
 				let response = await Get('getannoyed', false);
-				if (response !== '0') {
+				if (response !== "0") {
 					// alert("get annoyed");
 					sendNotification('HAHA', response);
 				}
 				console.log(response);
-			}, 50000);
+			}, 5000);
 
 		} else {
 			document.getElementById('Annoyer').style.display = 'block';
@@ -49,7 +49,6 @@
 		// math, riddlemethis, unscramble, getannoyed
 		try {
 			const response = await fetch(`https://annoymeapi.vercel.app/api/${type}`);
-			// console.log(await response.text());
 			const data = await response.json();
 			if (addQ) {
 				document.getElementById('q'+currentQuestion).style.display = 'none';
