@@ -77,7 +77,7 @@ function scrambler(randWord) {
 }
 
 app.get("/api/math", (req, res) => {
-	res.send(
+	res.json(
 		(() => {
 			const randMath = PickRandomItem(mathPuzzles);
 			return JSON.stringify({
@@ -88,7 +88,7 @@ app.get("/api/math", (req, res) => {
 	);
 });
 app.get("/api/riddlemethis", (req, res) => {
-	res.send(
+	res.json(
 		(() => {
 			const randRiddle = PickRandomItem(Riddles);
 			return JSON.stringify({
@@ -99,7 +99,7 @@ app.get("/api/riddlemethis", (req, res) => {
 	);
 });
 app.get("/api/unscramble", (req, res) => {
-	res.send(
+	res.json(
 		(() => {
 			const scrambled = scrambler(PickRandomItem(wordsToScramble));
 			// console.log(scrambled);
@@ -113,13 +113,13 @@ app.get("/api/unscramble", (req, res) => {
 
 app.get("/api/getannoyed", (req, res) => {
 	if (successfulAnnoys > 0) {
-		res.send(
+		res.json(
 			JSON.stringify(
 				`${successfulAnnoys} people annoyed you in the past 5 seconds`
 			)
 		);
 		successfulAnnoys = 0;
-	} else res.send(JSON.stringify("0"));
+	} else res.json(JSON.stringify("0"));
 });
 
 let successfulAnnoys = 0;
@@ -189,7 +189,7 @@ app.post("/api/checkandsubmit", (req, res) => {
 	}
 
 	if (passedMath && passedRiddle && passedUnscramble) {
-		res.send(
+		res.json(
 			JSON.stringify(
 				"Notification successfully sent to all of my devices 😥"
 			)
@@ -198,9 +198,9 @@ app.post("/api/checkandsubmit", (req, res) => {
 		successfulAnnoys++;
 	}
 	// You failed to solve the puzzles, try again in a day (Don't check your cookies) 😈 add cookies in future
-	// else res.send(JSON.stringify(`You failed to solve the puzzles 😈\nMath:${passedMath}\nRiddle${passedRiddle}\nUnscramble:${passedUnscramble}`));
+	// else res.json(JSON.stringify(`You failed to solve the puzzles 😈\nMath:${passedMath}\nRiddle${passedRiddle}\nUnscramble:${passedUnscramble}`));
 	else
-		res.send(
+		res.json(
 			JSON.stringify(
 				"You failed to solve the puzzles 😈"
 			)
